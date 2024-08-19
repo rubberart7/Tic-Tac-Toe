@@ -46,19 +46,57 @@ if (board[randomValue] === "") {
 console.log(board);
 
 let turn = 1;
-while (!board.every(cell => cell === 'X' || cell === 'O')) {
+let winner = null;
+while (!board.every(cell => cell === 'X' || cell === 'O') && (winner === null)) {
     randomValue = Math.floor(Math.random() * 9);
     while (!possibleSpots.includes(randomValue)) {
+        // if randomValue isnt present then keep getting a new one
         randomValue = Math.floor(Math.random() * 9);
     }
-    // if randomValue isnt present then keep getting a new one
     index = possibleSpots.indexOf(randomValue);
     if (board[randomValue] === "") {
         board[randomValue] = players[turn].token;
-        // whoever turn it is will get their spot updated
+        // whoever turn it is will get their spot updated and removed from spots available
         possibleSpots.splice(index, 1);
     }
+
     console.log(board);
+
+    if (
+        // Top row
+        (board[0] === 'X' && board[1] === 'X' && board[2] === 'X') ||
+        (board[3] === 'X' && board[4] === 'X' && board[5] === 'X') ||
+        (board[6] === 'X' && board[7] === 'X' && board[8] === 'X') ||
+    
+        // Left column
+        (board[0] === 'X' && board[3] === 'X' && board[6] === 'X') ||
+        (board[1] === 'X' && board[4] === 'X' && board[7] === 'X') ||
+        (board[2] === 'X' && board[5] === 'X' && board[8] === 'X') ||
+    
+        // Diagonals
+        (board[0] === 'X' && board[4] === 'X' && board[8] === 'X') ||
+        (board[2] === 'X' && board[4] === 'X' && board[6] === 'X')
+    ) {
+        winner = players[0];
+        console.log(`${playerOneName} wins!`);
+    } else if (
+        // Top row
+        (board[0] === 'O' && board[1] === 'O' && board[2] === 'O') ||
+        (board[3] === 'O' && board[4] === 'O' && board[5] === 'O') ||
+        (board[6] === 'O' && board[7] === 'O' && board[8] === 'O') ||
+    
+        // Left column
+        (board[0] === 'O' && board[3] === 'O' && board[6] === 'O') ||
+        (board[1] === 'O' && board[4] === 'O' && board[7] === 'O') ||
+        (board[2] === 'O' && board[5] === 'O' && board[8] === 'O') ||
+    
+        // Diagonals
+        (board[0] === 'O' && board[4] === 'O' && board[8] === 'O') ||
+        (board[2] === 'O' && board[4] === 'O' && board[6] === 'O')
+    ) {
+        winner = players[1];
+        console.log(`${playerTwoName} wins!`);
+    }
 
     turn = (turn + 1) % players.length;
     /*
