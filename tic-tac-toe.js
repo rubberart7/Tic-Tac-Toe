@@ -21,13 +21,36 @@ const GameBoardModule = (function() {
     return gameBoardInstance;
 })();
 
+let possibleSpots = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+function selectRandomMove(possibleSpots) {
+    let randomValue = Math.floor(Math.random() * possibleSpots.length);
+    // math.random() gets num from 0 and 1(exclusive) and multiplies by 9 to be from 0 and 9(exclusive)
+    // after that the number is floored down to recieve from 0 to 8
+    let selectedSpot = possibleSpots[randomValue];
+    possibleSpots.splice(randomValue, 1);
+    return selectedSpot;
+}
+
+function checkWinner(board, token) {
+    return (
+        // Top row
+        (board[0] === token && board[1] === token && board[2] === token) ||
+        (board[3] === token && board[4] === token && board[5] === token) ||
+        (board[6] === token && board[7] === token && board[8] === token) ||
+
+        // Left column
+        (board[0] === token && board[3] === token && board[6] === token) ||
+        (board[1] === token && board[4] === token && board[7] === token) ||
+        (board[2] === token && board[5] === token && board[8] === token) ||
+
+        // Diagonals
+        (board[0] === token && board[4] === token && board[8] === token) ||
+        (board[2] === token && board[4] === token && board[6] === token)
+    );
+}
+
 const board = GameBoardModule.getBoard();
 console.log(board);
-
-let possibleSpots = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-let randomValue = Math.floor(Math.random() * 9);
-// math.random() gets num from 0 and 1(exclusive) and multiplies by 9 to be from 0 and 9(exclusive)
-// after that the number is floored down to recieve from 0 to 8
 
 const playerOneName = "Player One";
 const playerTwoName = "Player Two";
@@ -35,15 +58,6 @@ const playerTwoName = "Player Two";
 const players = [
     {name: playerOneName, token: "X"}, {name: playerTwoName, token: "O"}
 ];
-let index = possibleSpots.indexOf(randomValue);
-if (board[randomValue] === "") {
-    board[randomValue] = players[0].token;
-    // if the spot is empty then make it the first players mark
-    possibleSpots.splice(index, 1);
-}
-// find the index of where the item is placed and remove it from possible spots left
-
-console.log(board);
 
 let turn = 1;
 let winner = null;
@@ -53,49 +67,14 @@ while (!board.every(cell => cell === 'X' || cell === 'O') && (winner === null)) 
         // if randomValue isnt present then keep getting a new one
         randomValue = Math.floor(Math.random() * 9);
     }
-    index = possibleSpots.indexOf(randomValue);
-    if (board[randomValue] === "") {
-        board[randomValue] = players[turn].token;
-        // whoever turn it is will get their spot updated and removed from spots available
-        possibleSpots.splice(index, 1);
-    }
+    let move = selectRandomMove(possibleSpots);
+    board[move] = players[turn].token;
 
     console.log(board);
 
-    if (
-        // Top row
-        (board[0] === 'X' && board[1] === 'X' && board[2] === 'X') ||
-        (board[3] === 'X' && board[4] === 'X' && board[5] === 'X') ||
-        (board[6] === 'X' && board[7] === 'X' && board[8] === 'X') ||
-    
-        // Left column
-        (board[0] === 'X' && board[3] === 'X' && board[6] === 'X') ||
-        (board[1] === 'X' && board[4] === 'X' && board[7] === 'X') ||
-        (board[2] === 'X' && board[5] === 'X' && board[8] === 'X') ||
-    
-        // Diagonals
-        (board[0] === 'X' && board[4] === 'X' && board[8] === 'X') ||
-        (board[2] === 'X' && board[4] === 'X' && board[6] === 'X')
-    ) {
-        winner = players[0];
-        console.log(`${playerOneName} wins!`);
-    } else if (
-        // Top row
-        (board[0] === 'O' && board[1] === 'O' && board[2] === 'O') ||
-        (board[3] === 'O' && board[4] === 'O' && board[5] === 'O') ||
-        (board[6] === 'O' && board[7] === 'O' && board[8] === 'O') ||
-    
-        // Left column
-        (board[0] === 'O' && board[3] === 'O' && board[6] === 'O') ||
-        (board[1] === 'O' && board[4] === 'O' && board[7] === 'O') ||
-        (board[2] === 'O' && board[5] === 'O' && board[8] === 'O') ||
-    
-        // Diagonals
-        (board[0] === 'O' && board[4] === 'O' && board[8] === 'O') ||
-        (board[2] === 'O' && board[4] === 'O' && board[6] === 'O')
-    ) {
-        winner = players[1];
-        console.log(`${playerTwoName} wins!`);
+    if (checkWinner(board, players[turn].token)) {
+        winner = players[turn];
+        console.log(`${winner.name} wins the game!`);
     }
 
     turn = (turn + 1) % players.length;
@@ -103,6 +82,7 @@ while (!board.every(cell => cell === 'X' || cell === 'O') && (winner === null)) 
     initially starts the turn off with player 0 and then switches at the end after X or O is placed
     */
 }
+
 
 
 
