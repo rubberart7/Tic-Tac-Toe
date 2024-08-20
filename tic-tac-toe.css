@@ -1,0 +1,24 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+h1 {
+    display: flex;
+    justify-content: center;
+}
+.board {
+    background-color: aliceblue;
+    border: 1px solid;
+    padding: 300px;
+    border-radius: 10px;
+    margin: 20px;
+}
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+button {
+    cursor: pointer;
+}
