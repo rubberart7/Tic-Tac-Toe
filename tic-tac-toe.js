@@ -9,9 +9,24 @@ const GameBoardModule = (function() {
         }
 
         const getBoard = () => board;
+
+        function printBoard() {
+            const rowSize = 3;
+            let boardStr = '';
+    
+            for (let i = 0; i < board.length; i++) {
+                boardStr += (board[i] || ' ') + ' '; // Add a space between cells
+    
+                if ((i + 1) % rowSize === 0) {
+                    boardStr += '\n'; // New line after each row
+                }
+            }
+            console.log(boardStr);
+        }
         
         return {
-            getBoard
+            getBoard,
+            printBoard
         };
     }
 
@@ -22,10 +37,9 @@ const GameBoardModule = (function() {
 
 function gameController() {
     let possibleSpots = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+    
     function selectRandomMove(possibleSpots) {
         let randomValue = Math.floor(Math.random() * possibleSpots.length);
-        // math.random() gets num from 0 and 1(exclusive) and multiplies by 9 to be from 0 and 9(exclusive)
-        // after that the number is floored down to recieve from 0 to 8
         let selectedSpot = possibleSpots[randomValue];
         possibleSpots.splice(randomValue, 1);
         return selectedSpot;
@@ -47,57 +61,84 @@ function gameController() {
             (board[0] === token && board[4] === token && board[8] === token) ||
             (board[2] === token && board[4] === token && board[6] === token)
         );
-        // returns true if you get any same tokens in a row like this
     }
 
-    function printBoard(board) {
-        const rowSize = 3;
-        let boardStr = '';
-    
-        for (let i = 0; i < board.length; i++) {
-            boardStr += (board[i] || ' ') + ' '; // Add a space between cells
-    
-            if ((i + 1) % rowSize === 0) {
-                boardStr += '\n'; // New line after each row
-            }
-        }
-    
-        console.log(boardStr);
-    }
-
-    const board = GameBoardModule.getBoard();
-    printBoard(board);
+    // const board = GameBoardModule.getBoard();
+    const board = GameBoardModule;
+    board.printBoard();
 
     const playerOneName = "Player One";
     const playerTwoName = "Player Two";
 
     const players = [
-        {name: playerOneName, token: "X"}, {name: playerTwoName, token: "O"}
+        {name: playerOneName, token: "X"},
+        {name: playerTwoName, token: "O"}
     ];
 
-    let turn = 1;
+    const getActivePlayer = () => activePlayer;
+
+    const getWinner = () => winner;
+
+    const getToken = () => activePlayer.token;
+
+    // Initialize activePlayer to playerOne
+    let activePlayer = players[0];
     let winner = null;
-    while (!board.every(cell => cell === 'X' || cell === 'O') && (winner === null)) {
-        randomValue = Math.floor(Math.random() * 9);
+
+    while (!board.getBoard().every(cell => cell === 'X' || cell === 'O') && winner === null) {
+        let randomValue = Math.floor(Math.random() * 9);
         while (!possibleSpots.includes(randomValue)) {
-            // if randomValue isnt present then keep getting a new one
             randomValue = Math.floor(Math.random() * 9);
         }
+        
         let move = selectRandomMove(possibleSpots);
-        board[move] = players[turn].token;
+        board.getBoard()[move] = activePlayer.token;
+        board.printBoard();
 
-        printBoard(board);
-
-        if (checkWinner(board, players[turn].token)) {
-            winner = players[turn];
-            console.log(`${winner.name} wins the game!`);
+        if (checkWinner(board.getBoard(), activePlayer.token)) {
+            winner = activePlayer;
+            console.log(`${getActivePlayer().name} wins the game!`);
         }
 
-        turn = (turn + 1) % players.length;
-        /*
-        initially starts the turn off with player 0 and then switches at the end after X or O is placed
-        */
+        // Toggle activePlayer
+        activePlayer = activePlayer === players[0] ? players[1] : players[0];
+    }
+
+    if (!winner) {
+        console.log("It's a draw!");
+    }
+
+    
+
+    return {
+        getWinner,
+        getActivePlayer,
+        getToken,
+        getBoard: board.getBoard
     }
 }
 
-gameController();
+function screenController() {
+    const game = gameController();
+    const board = game.getBoard();
+    const winnerDiv = document.querySelector(".winner");
+    const playerTurnDiv = document.querySelector(".turn");
+    const boardDiv = docuemnt.querySelector(".board");
+
+
+    const updateScreen = () => {
+        boardDiv.innerHtml = "";
+        playerTurnDiv.textContent = "";
+        winnerDiv.textContent = game.getWinner();
+
+        playerTurnDiv.textContent = `${game.getActivePlayer()}'s turn now...`
+
+        board.forEach(spot => {
+            const spotElement = document.createElement("div");
+            spotElement.textContent = `${game.getToken()}`;
+        })
+
+
+    }
+}
+
