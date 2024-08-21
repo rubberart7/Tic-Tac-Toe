@@ -3,22 +3,43 @@
     padding: 0;
     box-sizing: border-box;
 }
+
 h1 {
     display: flex;
     justify-content: center;
+    margin-bottom: 20px;
 }
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px); /* Adjust cell size */
+    grid-template-rows: repeat(3, 100px); /* Adjust cell size */
+    gap: 5px; /* Space between cells */
     background-color: aliceblue;
-    border: 1px solid;
-    padding: 300px;
-    border-radius: 10px;
+    border: 2px solid;
+    border-radius: 20px;
     margin: 20px;
+    padding: 10px;
 }
+
+button {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    border: 1px solid #ccc;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
 .buttons {
     display: flex;
     justify-content: center;
     gap: 20px;
-}
-button {
-    cursor: pointer;
+    margin-top: 20px;
 }
