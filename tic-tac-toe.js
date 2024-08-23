@@ -50,6 +50,7 @@ const GameBoardModule = (function() {
         }
 
         function placeToken(index) {
+            if (winner !== null) return false; // Prevent further moves if the game is over
             if (isValidMove(index)) {
                 board.getBoard()[index] = activePlayer.token;
                 if (checkWinner(board.getBoard(), activePlayer.token)) {
@@ -80,26 +81,15 @@ const GameBoardModule = (function() {
 
 })();
 
-function clickHandler(game = GameBoardModule) {
-    const boardDiv = document.querySelector(".board");
-
-    boardDiv.addEventListener("click", (event) => {
-        const target = event.target;
-        const index = parseInt(target.dataset.index, 10);
-        if (game.placeToken(index)) {
-            ScreenController(game).updateScreen();
-        }
-    });
-}
-
 function ScreenController(game = GameBoardModule) {
+    const winnerDiv = document.querySelector(".winner");
+    const playerTurnDiv = document.querySelector(".turn");
+    const buttons = document.querySelectorAll(".spot");
+
     const updateScreen = () => {
-        const winnerDiv = document.querySelector(".winner");
-        const playerTurnDiv = document.querySelector(".turn");
         const board = game.getBoard();
         const winner = game.getWinner();
 
-        const buttons = document.querySelectorAll(".spot");
         buttons.forEach((button, index) => {
             button.textContent = board[index];
         });
@@ -120,6 +110,21 @@ function ScreenController(game = GameBoardModule) {
     };
 }
 
+function clickHandler(game, screenController) {
+    const boardDiv = document.querySelector(".board");
+    boardDiv.addEventListener("click", (event) => {
+        const target = event.target;
+        const index = parseInt(target.dataset.index, 10);
+        console.log('Data-index attribute:', target.dataset.index);
+        console.log(`Clicked index: ${index}`);
+        if (game.placeToken(index)) {
+            screenController.updateScreen();
+        }
+    });
+    
+}
+
+// Initialize the game and screen controller
 const screenController = ScreenController();
-clickHandler();
-screenController.updateScreen(); // Call initially to set up the UI.
+screenController.updateScreen(); // Call initially to set up the UI
+clickHandler(GameBoardModule, screenController);
