@@ -2,16 +2,22 @@ const GameBoardModule = (function() {
     function GameBoard() {
         const rows = 3;
         const columns = 3;
-        const board = [];
+        let board = [];
 
         for (let i = 0; i < (rows * columns); i++) {
             board.push("");
         }
 
         const getBoard = () => board;
+
+        const clearBoard = () => {
+            board = Array(rows * columns).fill("");
+            console.log("board has been cleared", board);
+        };
         
         return {
             getBoard,
+            clearBoard
         };
     }
 
@@ -31,6 +37,12 @@ const GameBoardModule = (function() {
     
         let activePlayer = players[0];
         let winner = null;
+
+        const resetGame = () => {
+            activePlayer = players[0];
+            winner = null;
+            board.clearBoard();
+        }
 
         function checkWinner(board, token) {
             return (
@@ -55,13 +67,14 @@ const GameBoardModule = (function() {
                 board.getBoard()[index] = activePlayer.token;
                 if (checkWinner(board.getBoard(), activePlayer.token)) {
                     winner = activePlayer.name;
-                    console.log(`${activePlayer.name} wins the game!`);
+                    console.log(`${winner} wins the game!`);
                 } else if (board.getBoard().every(cell => cell !== "")) {
                     winner = "Draw";
                     console.log("It's a draw!");
                 } else {
                     console.log(`${activePlayer.name} played ${activePlayer.token}`);
                 }
+                console.log(board.getBoard());
                 activePlayer = activePlayer === players[0] ? players[1] : players[0];
                 return true;
             }
@@ -73,7 +86,9 @@ const GameBoardModule = (function() {
             getActivePlayer,
             placeToken,
             getToken,
-            getBoard: board.getBoard
+            resetGame,
+            getBoard: board.getBoard,
+            clearBoard: board.clearBoard
         };
     }
 
@@ -85,11 +100,15 @@ function ScreenController(game = GameBoardModule) {
     const winnerDiv = document.querySelector(".winner");
     const playerTurnDiv = document.querySelector(".turn");
     const buttons = document.querySelectorAll(".spot");
+    const board = game.getBoard();
+    
 
+    const startGame = () => {
+        winnerDiv.textContent = "Game has started";
+        playerTurnDiv.textContent = "Click anywhere on the board to play";
+    }
     const updateScreen = () => {
-        const board = game.getBoard();
         const winner = game.getWinner();
-
         buttons.forEach((button, index) => {
             button.textContent = board[index];
         });
@@ -105,13 +124,40 @@ function ScreenController(game = GameBoardModule) {
         }
     };
 
+    const resetScreen = (board) => {
+        console.log("reset screen works");
+        buttons.forEach((button, index) => {
+            button.textContent = board[index];
+            console.log(button.textContent);
+        });
+
+        winnerDiv.textContent = "No winner yet";
+        playerTurnDiv.textContent = "Game has been reset";
+    }
+
     return {
         updateScreen,
+        resetScreen,
+        startGame
     };
 }
 
-function clickHandler(game, screenController) {
+function clickHandler(game = GameBoardModule, screenController) {
     const boardDiv = document.querySelector(".board");
+    document.querySelector(".buttons").addEventListener("click", (event) => {
+        if (event.target.id === "reset") {
+            game.clearBoard();
+            const clearedBoard = game.getBoard();
+            console.log("reset button works");
+            game.resetGame(clearedBoard);
+            screenController.resetScreen(clearedBoard);
+        }
+
+        else if (event.target.id == "start") {
+            screenController.startGame();
+        }
+    });
+
     boardDiv.addEventListener("click", (event) => {
         const target = event.target;
         const index = parseInt(target.dataset.index, 10);
@@ -121,7 +167,6 @@ function clickHandler(game, screenController) {
             screenController.updateScreen();
         }
     });
-    
 }
 
 // Initialize the game and screen controller
