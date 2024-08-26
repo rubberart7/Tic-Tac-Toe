@@ -100,15 +100,16 @@ function ScreenController(game = GameBoardModule) {
     const winnerDiv = document.querySelector(".winner");
     const playerTurnDiv = document.querySelector(".turn");
     const buttons = document.querySelectorAll(".spot");
-    const board = game.getBoard();
-    
 
     const startGame = () => {
         winnerDiv.textContent = "Game has started";
         playerTurnDiv.textContent = "Click anywhere on the board to play";
-    }
+    };
+
     const updateScreen = () => {
         const winner = game.getWinner();
+        const board = game.getBoard(); // Get the latest board state
+
         buttons.forEach((button, index) => {
             button.textContent = board[index];
         });
@@ -124,16 +125,17 @@ function ScreenController(game = GameBoardModule) {
         }
     };
 
-    const resetScreen = (board) => {
+    const resetScreen = () => {
+        const board = game.getBoard(); // Get the latest board state
         console.log("reset screen works");
+
         buttons.forEach((button, index) => {
             button.textContent = board[index];
-            console.log(button.textContent);
         });
 
         winnerDiv.textContent = "No winner yet";
         playerTurnDiv.textContent = "Game has been reset";
-    }
+    };
 
     return {
         updateScreen,
@@ -144,27 +146,20 @@ function ScreenController(game = GameBoardModule) {
 
 function clickHandler(game = GameBoardModule, screenController) {
     const boardDiv = document.querySelector(".board");
-    document.querySelector(".buttons").addEventListener("click", (event) => {
+    document.querySelector(".container").addEventListener("click", (event) => {
         if (event.target.id === "reset") {
-            game.clearBoard();
-            const clearedBoard = game.getBoard();
-            console.log("reset button works");
-            game.resetGame(clearedBoard);
-            screenController.resetScreen(clearedBoard);
-        }
-
-        else if (event.target.id == "start") {
+            game.resetGame(); // Reset the game state
+            screenController.resetScreen(); // Reset the UI screen
+        } else if (event.target.id === "start") {
             screenController.startGame();
-        }
-    });
+        } else if (event.target.classList.contains("spot")) {
+            const target = event.target;
+            const index = parseInt(target.dataset.index, 10);
+            console.log(`The player placed in ${index} spot`);
 
-    boardDiv.addEventListener("click", (event) => {
-        const target = event.target;
-        const index = parseInt(target.dataset.index, 10);
-        console.log('Data-index attribute:', target.dataset.index);
-        console.log(`Clicked index: ${index}`);
-        if (game.placeToken(index)) {
-            screenController.updateScreen();
+            if (game.placeToken(index)) {
+                screenController.updateScreen(); // Update the screen after a valid move
+            }
         }
     });
 }
@@ -173,3 +168,4 @@ function clickHandler(game = GameBoardModule, screenController) {
 const screenController = ScreenController();
 screenController.updateScreen(); // Call initially to set up the UI
 clickHandler(GameBoardModule, screenController);
+
