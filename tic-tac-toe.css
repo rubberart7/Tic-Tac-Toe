@@ -2,48 +2,121 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f0f4f8;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 h1 {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
+    color: #333;
+    font-size: 2.5em;
+    text-align: center;
+    margin-bottom: 30px;
 }
 
 .container {
     display: flex;
     flex-direction: column;
     align-items: center;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.winner, .turn {
+    font-size: 1.5em;
+    color: #444;
+    margin-bottom: 20px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.players {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.players div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 45%;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+    color: #333;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .board {
     display: grid;
-    grid-template-columns: repeat(3, 100px); /* Adjust cell size */
-    grid-template-rows: repeat(3, 100px); /* Adjust cell size */
-    gap: 5px; /* Space between cells */
-    background-color: aliceblue;
-    border: 2px solid;
-    border-radius: 20px;
-    margin: 20px;
-    padding: 10px;
+    grid-template-columns: repeat(3, 120px); 
+    grid-template-rows: repeat(3, 120px);
+    gap: 10px; 
+    background-color: #333;
+    border: 3px solid #222;
+    border-radius: 15px;
+    padding: 15px;
 }
-button {
+
+button.spot {
     width: 100%;
     height: 100%;
-    padding: 10px  25px;
-    border-radius: 20px;
-    background-color: white;
-    border: 1px solid #ccc;
-    font-size: 1.5em;
+    padding: 20px;
+    border-radius: 15px;
+    background-color: #f9f9f9;
+    border: 2px solid #bbb;
+    font-size: 2em;
     cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
+
+button.spot:hover {
+    background-color: #e0e0e0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
 .buttons {
     display: flex;
     justify-content: center;
-    gap: 20px;
-    margin-top: 20px;
+    gap: 30px;
+    margin-top: 30px;
 }
-input {
-    appearance: none;
-    border-radius: 15px;
+
+button#start, button#reset {
+    padding: 15px 30px;
+    border-radius: 25px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button#start:hover, button#reset:hover {
+    background-color: #0056b3;
 }
