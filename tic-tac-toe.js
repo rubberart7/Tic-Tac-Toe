@@ -100,6 +100,7 @@ function ScreenController(game = GameBoardModule) {
     const winnerDiv = document.querySelector(".winner");
     const playerTurnDiv = document.querySelector(".turn");
     const buttons = document.querySelectorAll(".spot");
+    const board = game.getBoard();
 
     const startGame = () => {
         winnerDiv.textContent = "Game has started";
@@ -145,7 +146,6 @@ function ScreenController(game = GameBoardModule) {
 }
 
 function clickHandler(game = GameBoardModule, screenController) {
-    const boardDiv = document.querySelector(".board");
     document.querySelector(".container").addEventListener("click", (event) => {
         if (event.target.id === "reset") {
             game.resetGame(); // Reset the game state
@@ -166,6 +166,6 @@ function clickHandler(game = GameBoardModule, screenController) {
 
 // Initialize the game and screen controller
 const screenController = ScreenController();
-screenController.updateScreen(); // Call initially to set up the UI
+screenController.startGame(); // Call initially to set up the UI
 clickHandler(GameBoardModule, screenController);
 
