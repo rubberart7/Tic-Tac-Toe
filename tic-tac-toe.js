@@ -6,7 +6,9 @@ function obtainPlayerNames() {
 }
 
 function initializeGame(playerOneName, playerTwoName) {
+    // GameBoardModule is an IIFE
     const GameBoardModule = (function(playerOneName, playerTwoName) {
+        // gameboard here is a factory function and returns a GameBoard object with methods of getBoard and clearBoard
         function GameBoard() {
             const rows = 3;
             const columns = 3;
@@ -29,12 +31,14 @@ function initializeGame(playerOneName, playerTwoName) {
         }
     
         function GameController() {
+            // GameController is another factory function that uses a GameBoard object
             const board = GameBoard();
             const players = [
                 {name: playerOneName, token: "X"},
                 {name: playerTwoName, token: "O"}
             ];
             const getActivePlayer = () => activePlayer.name;
+            // when you see one liners like this, this is a function expression
             const getWinner = () => winner;
             const getPlayerOne = () => players[0].name;
             const getPlayerTwo = () => players[1].name;
@@ -73,14 +77,18 @@ function initializeGame(playerOneName, playerTwoName) {
                     if (checkWinner(board.getBoard(), activePlayer.token)) {
                         winner = activePlayer.name;
                         console.log(`${winner} wins the game!`);
+                        // when winner is found
                     } else if (board.getBoard().every(cell => cell !== "")) {
                         winner = "Draw";
                         console.log("It's a draw!");
+                        // if there is no winner and all the cells are full, its a draw
                     } else {
                         console.log(`${activePlayer.name} played ${activePlayer.token}`);
+                        // when the game continues but the cells are not full, then continue
                     }
                     console.log(board.getBoard());
                     activePlayer = activePlayer === players[0] ? players[1] : players[0];
+                    // a way to toggle plaers
                     return true;
                 }
                 return false;
@@ -102,6 +110,7 @@ function initializeGame(playerOneName, playerTwoName) {
         return GameController();
     
     })(playerOneName, playerTwoName);
+    // the first set in the beginning are the parameters and here you are just passing it in the function with the actual arguments
 
     return GameBoardModule;
 }
@@ -111,7 +120,6 @@ function ScreenController(game) {
     const winnerDiv = document.querySelector(".winner");
     const playerTurnDiv = document.querySelector(".turn");
     const buttons = document.querySelectorAll(".spot");
-    const board = game.getBoard();
     const startGame = () => {
         winnerDiv.textContent = "Game has started, Click anywhere on the board to play";
         playerTurnDiv.textContent = `Player One is ${game.getPlayerOne()} and Player Two is ${game.getPlayerTwo()}`;
@@ -173,6 +181,8 @@ function clickHandler(game, screenController) {
     });
 }
 
+// the click handler function will always listen for clicks and then update the game and screen afterwards
+
 document.getElementById('start').addEventListener('click', function() {
     const [playerOneName, playerTwoName] = obtainPlayerNames();
 
@@ -185,7 +195,5 @@ document.getElementById('start').addEventListener('click', function() {
         alert("Please enter names for both players.");
     }
 });
-
-// test comment
 
 
